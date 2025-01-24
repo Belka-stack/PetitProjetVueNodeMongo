@@ -33,6 +33,51 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// Création d'un nouvelle élément dans la liste
+
+// Route GET /list
+app.get('/list', async (req, res) => {
+  try {
+      const elements = await Element.find(); // Utilisation de async/await pour récupérer les éléments
+      res.status(200).json({ elements });
+  } catch (error) {
+      console.error("Erreur lors de la récupération des éléments:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+});
+
+// Route POST /list
+app.post('/list', async (req, res) => {
+  try {
+      const newElement = await Element.create(req.body); // Utilisation de async/await pour créer un élément
+      res.status(201).json(newElement);
+  } catch (error) {
+      console.error("Erreur lors de la création de l'élément:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+});
+
+// Route PUT /list
+app.put('/list/:id', async (req, res) => {
+  try {
+      const updatedElement = await Element.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      res.status(200).json(updatedElement);
+  } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'élément:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+});
+
+// Route DELETE /list
+app.delete('/list/:id', async (req, res) => {
+  try {
+      await Element.findByIdAndDelete(req.params.id); // Utilisation de async/await pour supprimer un élément
+      res.status(200).json({ message: "Élément supprimé" });
+  } catch (error) {
+      console.error("Erreur lors de la suppression de l'élément:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
